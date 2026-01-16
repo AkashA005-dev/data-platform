@@ -1,0 +1,5 @@
+user_id,name,age,email,errors
+2,Bob,,bob@example.com,age is missing
+3,Charlie,thirty,charlie@example.com,age has invalid type : thirty
+4,,40,missingname@example.com,name is missing
+5,David,29,,email is missing

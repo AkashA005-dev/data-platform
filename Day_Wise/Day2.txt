@@ -1,0 +1,106 @@
+
+DAY 2 OBJECTIVE (very specific)
+
+     Take ONE raw data file and validate its schema before processing.
+
+
+If you don’t understand why this matters, here’s the blunt truth:
+
+Real data is always broken
+
+Schema validation is the first production gate
+
+Most freshers skip this → that’s why they’re rejected
+
+
+
+
+
+
+STEP 1: Put REAL raw data
+
+
+
+
+
+STEP 2: Create schema definition
+
+USER_SCHEMA = {
+    "user_id": int,
+    "name": str,
+    "age": int,
+    "email": str
+}
+
+
+STEP 3: Write schema validator
+
+src/validation/validate_users.py
+
+import csv
+from validation.schema import USER_SCHEMA
+
+RAW_FILE = "data/raw/users.csv"
+
+def validate_row(row, line_number):
+    errors = []
+
+    for column, expected_type in USER_SCHEMA.items():
+        value = row.get(column)
+
+        if value is None or value == "":
+            errors.append(f"{column} is missing")
+            continue
+
+        try:
+            expected_type(value)
+        except ValueError:
+            errors.append(f"{column} has invalid type: {value}")
+
+    return errors
+
+
+def validate_file():
+    with open(RAW_FILE, newline="") as f:
+        reader = csv.DictReader(f)
+
+        for i, row in enumerate(reader, start=2):
+            errors = validate_row(row, i)
+
+            if errors:
+                print(f"Line {i} errors:", errors)
+            else:
+                print(f"Line {i} valid")
+
+
+if __name__ == "__main__":
+    validate_file()
+
+
+
+
+
+
+STEP 4: Run and OBSERVE
+
+
+
+
+
+STEP 5: Minimal understanding (this is all you need today)
+
+You must be able to answer only these:
+
+Why DictReader?
+
+Because column names matter more than positions
+
+Why schema dictionary?
+
+Because rules must be explicit
+
+Why validate before cleaning?
+
+Because bad data should not silently pass
+
+If you can answer these, DAY 2 is successful.

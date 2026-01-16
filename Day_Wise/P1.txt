@@ -1,0 +1,91 @@
+LAYER 1 — Execution understanding
+How to run , print , break , trace
+
+if __name__ == "__main__":
+    files = list_raw_files()
+    print("Raw files found:", files)
+
+
+LAYER 2 — Data-flow understanding
+In Data Engineering, Python is not “logic heavy”.
+It’s flow heavy.
+
+Where does data come from?
+
+What shape is it in?
+
+What changes?
+
+Where does it go?
+
+
+
+LAYER 3 — Pattern recognition (this is where mastery grows)
+
+You will see the same patterns again and again:
+
+Read something
+
+Loop over it
+
+Validate
+
+Write output
+
+Log errors
+
+
+
+
+
+
+
+How Python fits your DAILY reality
+
+Weekdays (tired brain)
+
+You:
+
+Modify existing code
+
+Add print statements
+
+Add small validations
+
+Fix one bug
+
+That’s it.
+
+
+Weekends (fresh brain)
+
+You:
+
+Refactor
+
+Understand “why”
+
+Read documentation
+
+Clean code
+
+This split is intentional.
+
+
+
+
+
+
+How I want you to THINK when reading Python
+
+Start asking:
+
+What goes in?
+
+What comes out?
+
+What can break?
+
+How do I detect failure?
+
+That mindset = Data Engineer.

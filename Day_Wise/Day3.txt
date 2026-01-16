@@ -1,0 +1,125 @@
+DAY 3 OBJECTIVE
+
+Read raw data → validate →
+write valid rows to one file and invalid rows (with errors) to another file
+
+
+
+STEP 1: Create output files location
+
+data/processed/
+        valid_users.csv
+        invalid_users.csv
+
+
+
+
+STEP 2: Modify validator to RETURN results
+
+src/validation/validate_users.py
+
+Replace your code with this
+
+
+import csv
+from src.validation.schema import USER_SCHEMA
+
+RAW_FILE = "data/raw/users.csv"
+VALID_OUTPUT = "data/processed/valid_users.csv"
+INVALID_OUTPUT = "data/processed/invalid_users.csv"
+
+
+def validate_row(row):
+    errors = []
+
+    for column, expected_type in USER_SCHEMA.items():
+        value = row.get(column)
+
+        if value is None or value == "":
+            errors.append(f"{column} is missing")
+            continue
+
+        try:
+            expected_type(value)
+        except ValueError:
+            errors.append(f"{column} has invalid type: {value}")
+
+    return errors
+
+
+def process_file():
+    valid_rows = []
+    invalid_rows = []
+
+    with open(RAW_FILE, newline="") as f:
+        reader = csv.DictReader(f)
+
+        for row in reader:
+            errors = validate_row(row)
+
+            if errors:
+                row["errors"] = "; ".join(errors)
+                invalid_rows.append(row)
+            else:
+                valid_rows.append(row)
+
+    return valid_rows, invalid_rows
+
+
+def write_csv(path, rows, fieldnames):
+    with open(path, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+if __name__ == "__main__":
+    valid_rows, invalid_rows = process_file()
+
+    if valid_rows:
+        write_csv(VALID_OUTPUT, valid_rows, fieldnames=valid_rows[0].keys())
+
+    if invalid_rows:
+        write_csv(INVALID_OUTPUT, invalid_rows, fieldnames=invalid_rows[0].keys())
+
+    print(f"Valid rows written: {len(valid_rows)}")
+    print(f"Invalid rows written: {len(invalid_rows)}")
+
+
+
+
+
+
+STEP 3: Run it correctly (5 minutes)
+
+From project root:
+    python -m src.validation.validate_users
+
+
+
+STEP 4: OPEN the output files
+Look at:
+
+    valid_users.csv
+
+    invalid_users.csv
+
+If you don’t open them, you didn’t learn anything.
+
+
+
+
+What you must understand today (nothing more)
+
+Answer these in your head:
+
+Why separate valid and invalid data?
+→ Because downstream systems must trust inputs
+
+Why add error messages to invalid rows?
+→ For debugging + reprocessing
+
+Why return lists instead of printing?
+→ Pipelines pass data forward
+
+If you can answer these, DAY 3 is a success.
