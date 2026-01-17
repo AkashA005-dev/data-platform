@@ -1,8 +1,7 @@
 # Batch Analytics Data Platform
 
 ## Overview
-This project simulates a production-style batch data engineering pipeline.
-It handles raw data ingestion, cleaning, transformation, and analytics modeling.
+Build a simple batch analytics pipeline that ingests raw CSV, validates schema, attempts cleaning of invalid records, and separates cleaned vs rejected data for analytics readiness.
 
 ## Goals
 - Practice real-world data engineering concepts
@@ -10,7 +9,16 @@ It handles raw data ingestion, cleaning, transformation, and analytics modeling.
 - Demonstrate SQL, Python, and system design skills
 
 ## Architecture (Initial)
-Raw Data → Cleaning → Transformation → Analytics Tables
+Raw CSV (data/invalid) → Validation Layer → Valid vs Invalid
+Invalid → Cleaning → Cleaned + Rejected with error metadata
+
+## How to run
+# from project root
+python -m src.pipeline
+
+## What you will see
+data/cleaned/cleaned_invalid_data.csv
+data/rejected/rejected_data.csv
 
 ## Tech Stack
 - Python
