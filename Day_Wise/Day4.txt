@@ -1,0 +1,188 @@
+First: I’m calling out weak thinking upfront
+
+If your instinct is:
+
+    “Let’s just drop invalid rows” ❌
+
+    “Let’s fix everything magically” ❌
+
+    “Let’s write one big function” ❌
+
+Then stop. That’s junior + academic thinking.
+
+
+Real pipelines do this instead:
+
+    Invalid data is valuable
+
+    Cleaning is rule-based, not guess-based
+
+    Every fix must be traceable and auditable
+
+    Today is about controlled correction, not perfection.
+
+
+
+
+Objective (what DAY 4 actually delivers)
+
+By end of today, your repo must have:
+
+    A cleaning module that attempts deterministic fixes
+
+    Clear separation between:
+
+        auto-fixable records
+
+        permanently bad records
+
+        A cleaned dataset ready for downstream processing
+
+        Logged reasons for every correction or failure
+
+If you can’t explain why a row was fixed or rejected → your pipeline is weak.
+
+
+
+
+Assumptions (don’t fight these, align to them)
+
+Your invalid data probably includes:
+
+    1. Wrong data types (string instead of int/date)
+
+    2. Nulls where not allowed
+
+    3. Formatting issues (" 123 ", "2024/01/05")
+
+    4. Range violations (negative age, salary = 0)
+
+If your invalid data is only “NULL rows”, your validation logic is too shallow.
+
+
+
+Create a cleaning module
+src/
+ ├── cleaning/
+ │    ├── __init__.py
+ │    └── cleaner.py
+
+
+
+
+Define explicit cleaning rules (not smart guesses)
+
+def clean_int(value):
+    try:
+        return int(value), None
+    except (TypeError, ValueError):
+        return None, "INVALID_INT"
+
+def clean_date(value):
+    for fmt in ("%Y-%m-%d", "%Y/%m/%d"):
+        try:
+            return datetime.strptime(value, fmt).date(), None
+        except Exception:
+            pass
+    return None, "INVALID_DATE"
+
+
+This is boring on purpose.
+Boring = reliable. Reliable = production.
+
+
+
+
+
+
+Row-level cleaning (THIS is the real DE skill)
+
+You must process invalid rows only, not the full dataset again.
+
+for row in invalid_rows:
+    cleaned_row = {}
+    errors = []
+
+    # column-wise cleaning
+    val, err = clean_int(row["user_id"])
+    if err: errors.append(("user_id", err))
+    cleaned_row["user_id"] = val
+
+    ...
+
+    if errors:
+        send_to_rejects(cleaned_row, errors)
+    else:
+        send_to_cleaned(cleaned_row)
+
+
+
+
+
+Two outputs ONLY:
+
+cleaned_invalid_data.csv
+
+rejected_data.csv
+
+If you mix them → your pipeline is amateur.
+
+
+
+
+
+
+Add correction metadata (this is interview gold)
+
+Rejected rows must include:
+
+    original value
+
+    column name
+
+    failure reason
+
+    processing timestamp
+
+user_id, column, error_code, raw_value, processed_at
+
+
+
+
+
+Update pipeline entry point (light touch)
+
+Your main pipeline should now look like:
+
+ingest
+ → validate
+   → valid_data
+   → invalid_data
+        → clean
+            → cleaned_invalid_data
+            → rejected_data
+
+NO branching chaos. Linear, readable, boring.
+
+
+
+
+
+
+Deliverables Checklist (be honest)
+
+By end of DAY 4, you should be able to say:
+
+I can explain why a row failed
+
+I can explain why a row was fixed
+
+I can point to code + output file
+
+I can explain this flow verbally in <60 seconds
+
+If you can’t → you’re not job-ready yet.
+
+
+
+

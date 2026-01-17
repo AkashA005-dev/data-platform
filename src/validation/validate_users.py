@@ -11,7 +11,8 @@ def validate_row(row):
 
     for column , expected_type in USER_SCHEMA.items():
         value = row.get(column)
-
+        
+        
         if value is None or value == "":
             errors.append(f"{column} is missing")
             continue
